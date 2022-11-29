@@ -7,6 +7,7 @@ const path = require('path');
 const cors = require('cors');
 const app = express();
 app.use(cors());
+app.use(express.json());
 
 // Se connecter à la base de données
 mongoose.connect('mongodb+srv://Sam:manofsteel891@cluster0.jzjd9lt.mongodb.net/?retryWrites=true&w=majority',
@@ -15,10 +16,10 @@ mongoose.connect('mongodb+srv://Sam:manofsteel891@cluster0.jzjd9lt.mongodb.net/?
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
-app.use((req, res) => {
+/*app.use((req, res) => {
    res.json({ message: 'Votre requête a bien été reçue !' });
    //next();
-});
+});*/
 
 // pour le CORS
 app.use((req, res, next) => {

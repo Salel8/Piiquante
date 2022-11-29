@@ -1,7 +1,12 @@
 const User = require('../models/user.js');  // pour importer le modèle User
 const jwt = require('jsonwebtoken');  //pour créer et vérifier les tokens
+const bcrypt = require('bcrypt');
 
 exports.signup = (req, res, next) => {
+  if(req.body.email===undefined || req.body.password===undefined){
+    return res.status(400).json({ message: 'Veuillez renseigner votre adresse mail et un mot de passe' })
+  }
+
   bcrypt.hash(req.body.password, 10)
     .then(hash => {
       const user = new User({
