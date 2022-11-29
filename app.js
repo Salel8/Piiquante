@@ -17,17 +17,20 @@ mongoose.connect('mongodb+srv://Sam:manofsteel891@cluster0.jzjd9lt.mongodb.net/?
 
 app.use((req, res) => {
    res.json({ message: 'Votre requête a bien été reçue !' });
+   //next();
 });
 
 // On enregistre le routeur
 //app.use('/api/stuff', stuffRoutes);
+app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-app.use('/api/auth', userRoutes);
+
+//app.use('/login', userRoutes);
 app.use('/api/sauces', saucesRoutes);
 
 // Modèle utilisateur
-const userSchema = require('./models/user.js');
+//const userSchema = require('./models/user.js');
 
 
 
