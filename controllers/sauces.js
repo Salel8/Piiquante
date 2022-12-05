@@ -57,6 +57,8 @@ exports.getOneSauce = (req, res, next) => {
 exports.modifySauce = (req, res, next) => {
    const sauceObject = req.file ? {
        ...JSON.parse(req.body.sauce),
+       /*const filename = sauce.imageUrl.split('/images/')[1];*/
+       /*fs.unlink(`images/${filename}`);*/
        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
    } : { ...req.body };
 
@@ -69,12 +71,7 @@ exports.modifySauce = (req, res, next) => {
                Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                .then(() => {
                  res.status(200).json({message : 'Objet modifié!'});
-                 /*const filename = sauce.imageUrl.split('/images/')[1];
-                 fs.unlink(`images/${filename}`, () => {
-                     Thing.deleteOne({_id: req.params.id})
-                         .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
-                         .catch(error => res.status(401).json({ error }));
-                 });*/
+
                })
                .catch(error => res.status(401).json({ error }));
            }
@@ -102,7 +99,7 @@ exports.deleteSauce = (req, res, next) => {
            } else {
                const filename = sauce.imageUrl.split('/images/')[1];
                fs.unlink(`images/${filename}`, () => {
-                   Thing.deleteOne({_id: req.params.id})
+                   Sauce.deleteOne({_id: req.params.id})
                        .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
                        .catch(error => res.status(401).json({ error }));
                });
@@ -111,4 +108,76 @@ exports.deleteSauce = (req, res, next) => {
        .catch( error => {
            res.status(500).json({ error });
        });
+};
+
+exports.likeSauce = (req, res, next) => {
+  /*const sauceObject = (req.params.userId==az) ? {JSON.parse(req.body.sauce)
+  } : {};*/
+  //const sauceObject = JSON.parse(req.body.sauce);
+  allReadyUsedObjet={
+    allReadyUsedLikes: 'no',
+    allReadyUsedDislikes: 'no',
+    numberArrayUserLikes: 0,
+    numberArrayUserDislikes: 0
+  };
+  let a=0;
+  for (const element of usersLiked) {
+    if (req.auth.userId==element){
+      allReadyUsedObjet.allReadyUsedLikes = 'yes';
+      allReadyUsedObjet.numberArrayUserLikes = a;
+    }
+    a = a + 1;
+  }
+
+  let b=0;
+  for (const element of usersDisliked) {
+    if (req.auth.userId==element){
+      allReadyUsedObjet.allReadyUsedDislikes = 'yes';
+      allReadyUsedObjet.numberArrayUserDislikes = b;
+    }
+    b = b + 1;
+  }
+
+  if (req.body.sauce.like == 1 && allReadyUsedObjet.allReadyUsedLikes=='no'){
+    const sauceObject = {...JSON.parse(req.body.sauce),
+    likes: parseInt(sauce.likes + 1),
+    usersLiked: push(req.body.sauce.userId)};
+  }
+  
+  if (req.body.sauce.like == -1 && allReadyUsedObjet.allReadyUsedDislikes=='no'){
+      const sauceObject = {...JSON.parse(req.body.sauce),
+      dislikes: parseInt(sauce.dislikes + 1),
+      usersDisliked: push(req.body.sauce.userId)};
+  }
+
+  if (req.body.sauce.like == 0 && allReadyUsedObjet.allReadyUsedLikes=='yes'){
+        const sauceObject = {...JSON.parse(req.body.sauce),
+        likes: parseInt(sauce.likes - 1),
+        usersLiked: split(allReadyUsedObjet.numberArrayUserLikes, 1)};
+  }
+
+  if (req.body.sauce.like == 0 && allReadyUsedObjet.allReadyUsedDislikes=='yes'){
+        const sauceObject = {...JSON.parse(req.body.sauce),
+        dislikes: parseInt(sauce.likes - 1),
+        usersDisliked: split(allReadyUsedObjet.numberArrayUserDislikes, 1)};
+  }
+
+
+  delete sauceObject._userId;
+  Sauce.findOne({_id: req.params.id})
+      .then((sauce) => {
+        if (sauce.userId != req.auth.userId) {
+            res.status(401).json({message: 'Not authorized'});
+        } else {
+          Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id })
+          .then(() => {
+            res.status(200).json({message : 'Objet modifié!'});
+
+          })
+          .catch(error => res.status(401).json({ error }));
+      })
+      .catch( error => {
+          res.status(500).json({ error });
+        });
+
 };
