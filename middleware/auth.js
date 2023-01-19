@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const mdp = require('../mdp.env');
 
 module.exports = (req, res, next) => {
    try {
