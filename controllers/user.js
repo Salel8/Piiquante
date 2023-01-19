@@ -1,6 +1,7 @@
 const User = require('../models/user.js');  // pour importer le modèle User
 const jwt = require('jsonwebtoken');  //pour créer et vérifier les tokens
 const bcrypt = require('bcrypt');
+const mdp = require('../mdp.env');
 
 exports.signup = (req, res, next) => {
   if(req.body.email===undefined || req.body.password===undefined){
