@@ -8,6 +8,9 @@ const cors = require('cors');
 const app = express();
 app.use(cors());
 app.use(express.json());
+//const mdp = require('./mdp.env');
+require('dotenv').config();
+const dataBase = process.env.DATABASE;
 
 // Se connecter à la base de données
 mongoose.connect('mongodb+srv://Sam:manofsteel891@cluster0.jzjd9lt.mongodb.net/?retryWrites=true&w=majority',
